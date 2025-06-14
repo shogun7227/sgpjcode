@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Arduino Projects Code</title>
+<style>
+  body {
+    background-image: url('bg1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0; height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    color: white;
+    padding: 30px 0 10px;
+    font-size: 40px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin: 0;
+  }
+  .gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding-bottom: 30px;
+  }
+  .item {
+    cursor: pointer;
+    width: 180px;
+    text-align: center;
+  }
+  .item img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+  }
+  .item:hover img {
+    transform: scale(1.05);
+  }
+  .item-name {
+    margin-top: 8px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-content {
+    background: white;
+    border-radius: 10px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+  }
+  .modal-image {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  pre {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: Consolas, monospace;
+    white-space: pre-wrap;
+  }
+  button.copy-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+  }
+  button.copy-btn:hover {
+    background-color: #0056b3;
+  }
+</style>
+</head>
+<body>
+
+<h1>Arduino Projects Code</h1>
+
+<div class="gallery">
+
+  <div class="item" data-image="gimg/nser.png" data-code='
+#include &lt;Servo.h&gt;
+
+Servo myservo;
+
+void setup() {
+  myservo.attach(9);
+}
+
+void loop() {
+  myservo.write(0);
+  delay(1000);
+
+  myservo.write(180);
+  delay(1000);
+}
+'>
+    <img src="gimg/nser.png" alt="Normal Servo" />
+    <div class="item-name">Normal Servo</div>
+  </div>
+
+  <div class="item" data-image="gimg/servol.png" data-code='
+#include &lt;Servo.h&gt;
+Servo myservo;
+int potpin=0;
+int val;
+void setup()
+{
+  myservo.attach(9);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  val = analogRead(potpin);
+  val = map(val, 0, 1023, 0, 180);
+  Serial.print("val = ");
+  Serial.print(val);
+  myservo.write(val);
+  delay(15);
+}
+'>
+    <img src="gimg/servol.png" alt="Servo + Volume" />
+    <div class="item-name">Servo + Volume</div>
+  </div>
+
+  <div class="item" data-image="gimg/sensor.png" data-code='
+#include &lt;Servo.h&gt;
+
+#define trigPin 9
+#define echoPin 8
+Servo servo;
+int sound = 250;
+
+void setup() {
+  Serial.begin (9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  servo.attach(6);
+}
+
+void loop() {
+  long duration, distance;
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration/2) / 29.1;
+  if (distance &lt; 80) {
+    Serial.print(distance);
+    Serial.println(" cm");
+    servo.write(90);
+  }
+  else if (distance&lt;180) {
+    Serial.print(distance);
+    Serial.println(" cm");
+    servo.write(180);
+  }
+  else {
+    Serial.println("The distance is more than 180cm");
+  }
+  delay(500);
+}
+'>
+    <img src="gimg/sensor.png" alt="Ultrasonic Sensor" />
+    <div class="item-name">Ultrasonic Sensor</div>
+  </div>
+
+  <div class="item" data-image="gimg/7seg.png" data-code='
+int a=7;
+int b=6;
+int c=5;
+int d=11;
+int e=10;
+int f=8;
+int g=9;
+int dp=4;
+
+void display1(void)
+{
+  digitalWrite(b,HIGH);
+  digitalWrite(c,HIGH);
+}
+
+void display2(void)
+{
+  digitalWrite(a,HIGH);
+  digitalWrite(b,HIGH);
+  digitalWrite(g,HIGH);
+  digitalWrite(e,HIGH);
+  digitalWrite(d,HIGH);
+}
+
+void display3(void)
+{
+  digitalWrite(a,HIGH);
+  digitalWrite(b,HIGH);
+  digitalWrite(c,HIGH);
+  digitalWrite(d,HIGH);
+  digitalWrite(g,HIGH);
+}
+
+void display4(void)
+{
+  digitalWrite(f,HIGH);
+  digitalWrite(b,HIGH);
+  digitalWrite(g,HIGH);
+  digitalWrite(c,HIGH);
+}
+
+void display5(void)
+{
+  digitalWrite(a,HIGH);
+  digitalWrite(c,HIGH);
+  digitalWrite(d,HIGH);
+  digitalWrite(f,HIGH);
+  digitalWrite(g,HIGH);
+}
+
+void display6(void)
+{
+  digitalWrite(a,HIGH);
+  digitalWrite(c,HIGH);
+  digitalWrite(d,HIGH);
+  digitalWrite(e,HIGH);
+  digitalWrite(f,HIGH);
+  digitalWrite(g,HIGH);
+}
+
+void display7(void)
+{
+  digitalWrite(a,HIGH);
+  digitalWrite(b,HIGH);
+  digitalWrite(c,HIGH);
+}
+
+void display8(void)
+{
+  digitalWrite(a,HIGH);
+  digitalWrite(b,HIGH);
+  digitalWrite(g,HIGH);
+  digitalWrite(c,HIGH);
+  digitalWrite(d,HIGH);
+  digitalWrite(e,HIGH);
+  digitalWrite(f,HIGH);
+}
+
+void clearDisplay(void)
+{
+  digitalWrite(a,LOW);
+  digitalWrite(b,LOW);
+  digitalWrite(g,LOW);
+  digitalWrite(c,LOW);
+  digitalWrite(d,LOW);
+  digitalWrite(e,LOW);
+  digitalWrite(f,LOW);
+}
+
+void display9(void)
+{
+  digitalWrite(a,HIGH);
+  digitalWrite(b,HIGH);
+  digitalWrite(c,HIGH);
+  digitalWrite(d,HIGH);
+  digitalWrite(f,HIGH);
+  digitalWrite(g,HIGH);
+}
+
+void display0(void)
+{
+  digitalWrite(a,HIGH);
+  digitalWrite(b,HIGH);
+  digitalWrite(c,HIGH);
+  digitalWrite(d,HIGH);
+  digitalWrite(e,HIGH);
+  digitalWrite(f,HIGH);
+}
+
+void setup()
+{
+  int i;
+  for(i=4;i<=11;i++)
+    pinMode(i,OUTPUT);
+
+  clearDisplay(); 
+}
+
+void loop()
+{
+  while(1)
+  {
+    clearDisplay();
+    delay(100);
+    display1();
+    delay(2000);
+
+    clearDisplay();
+    delay(100);
+    display2();
+    delay(2000);
+
+    clearDisplay();
+    delay(100);
+    display3();
+    delay(2000);
+
+    clearDisplay();
+    delay(100);
+    display4();
+    delay(2000);
+
+    clearDisplay();
+    delay(100);
+    display5();
+    delay(2000);
+
+    clearDisplay();
+    delay(100);
+    display6();
+    delay(2000);
+
+    clearDisplay();
+    delay(100);
+    display7();
+    delay(2000);
+
+    clearDisplay();
+    delay(100);
+    display8();
+    delay(2000);
+
+    clearDisplay();
+    delay(100);
+    display9();
+    delay(2000);
+
+    clearDisplay();
+    delay(100);
+    display0();
+    delay(2000);
+  }
+}
+'>
+    <img src="gimg/7seg.png" alt="7-Segment1 to 0" />
+    <div class="item-name">7-Segment1 to 0</div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+  <div class="modal-content">
+    <span class="modal-close" id="modal-close" aria-label="Close modal">&times;</span>
+    <img src="" alt="Expanded Image" class="modal-image" id="modal-image" />
+    <pre id="modal-code"></pre>
+    <button class="copy-btn" id="copy-btn">Copy Code</button>
+  </div>
+</div>
+
+<script>
+  const items = document.querySelectorAll('.item');
+  const modal = document.getElementById('modal');
+  const modalImage = document.getElementById('modal-image');
+  const modalCode = document.getElementById('modal-code');
+  const modalClose = document.getElementById('modal-close');
+  const copyBtn = document.getElementById('copy-btn');
+
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      const imgSrc = item.getAttribute('data-image');
+      const code = item.getAttribute('data-code').trim();
+
+      modalImage.src = imgSrc;
+      modalImage.alt = item.querySelector('img').alt || 'Expanded Image';
+      modalCode.textContent = code;
+
+      modal.style.display = 'flex';
+      modal.focus();
+    });
+  });
+
+  modalClose.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === "Escape" && modal.style.display === "flex") {
+      modal.style.display = "none";
+    }
+  });
+
+  modalImage.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      if (modalImage.requestFullscreen) {
+        modalImage.requestFullscreen();
+      } else if (modalImage.webkitRequestFullscreen) {
+        modalImage.webkitRequestFullscreen();
+      } else if (modalImage.msRequestFullscreen) {
+        modalImage.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  });
+
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(modalCode.textContent).then(() => {
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => {
+        copyBtn.textContent = "Copy Code";
+      }, 1500);
+    }).catch(() => {
+      alert('Failed to copy code');
+    });
+  });
+</script>
+
+</body>
+</html>
