@@ -1,0 +1,188 @@
+<!DOCTYPE html> 
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>By Shogun</title>
+  <style>
+    body {
+      background-image: url('bg8.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 30px 0;
+      color: white;
+      text-shadow: 1px 1px 5px black;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding-bottom: 100px;
+    }
+
+    .item {
+      width: 180px;
+      cursor: pointer;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      background: white;
+      transition: transform 0.2s ease;
+    }
+
+    .item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .item img {
+      width: 100%;
+      display: block;
+    }
+
+    .item-name {
+      padding: 10px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .contact-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #007bff, #00bfff);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .contact-btn:hover {
+      background: linear-gradient(135deg, #0056b3, #0099cc);
+      transform: scale(1.05);
+    }
+
+    /* POPUP */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .popup {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      max-width: 300px;
+      width: 90%;
+    }
+
+    .popup h2 {
+      margin-bottom: 15px;
+    }
+
+    .popup a {
+      display: block;
+      margin: 10px 0;
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .popup a:hover {
+      text-decoration: underline;
+    }
+
+    .close-btn {
+      margin-top: 20px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .close-btn:hover {
+      background: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+<h1>By Shogun</h1>
+
+<div class="gallery">
+  <div class="item" onclick="goToArduinoPath()">
+    <img src="arduinouno.png" alt="Project 1" />
+    <div class="item-name">Arduino UNO</div>
+  </div>
+  <div class="item" onclick="goToArduinoPath()">
+    <img src="https://via.placeholder.com/180x120?text=Project+2" alt="Project 2" />
+    <div class="item-name">โปรเจค 2</div>
+  </div>
+  <div class="item" onclick="goToArduinoPath()">
+    <img src="https://via.placeholder.com/180x120?text=Project+3" alt="Project 3" />
+    <div class="item-name">โปรเจค 3</div>
+  </div>
+  <div class="item" onclick="goToArduinoPath()">
+    <img src="https://via.placeholder.com/180x120?text=Project+4" alt="Project 4" />
+    <div class="item-name">โปรเจค 4</div>
+  </div>
+</div>
+
+<!-- ปุ่มติดต่อเพิ่มเติม -->
+<a href="#" class="contact-btn" onclick="openPopup()">Contact</a>
+
+<!-- Popup -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup">
+    <h2>My Contact</h2>
+    <a href="https://www.facebook.com/patcharaphon.muensa?locale=th_TH" target="_blank">Facebook</a>
+    <a href="https://www.instagram.com/jshogunn19/" target="_blank">Instagram</a>
+    <button class="close-btn" onclick="closePopup()">Close</button>
+  </div>
+</div>
+
+<script>
+  function goToArduinoPath() {
+    window.location.href = 'arduinopath.html';
+  }
+
+  function openPopup() {
+    document.getElementById('popupOverlay').style.display = 'flex';
+  }
+
+  function closePopup() {
+    document.getElementById('popupOverlay').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
