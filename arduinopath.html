@@ -1,124 +1,566 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Arduino Projects Code</title>
-<style>
-  body {
-    background-image: url('bg1.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-attachment: fixed;
-    font-family: Arial, sans-serif;
-    margin: 0; padding: 0; height: 100vh;
-  }
-  h1 {
-    text-align: center;
-    color: white;
-    padding: 30px 0 10px;
-    font-size: 40px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    margin: 0;
-  }
-  .gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    padding-bottom: 30px;
-  }
-  .item {
-    cursor: pointer;
-    width: 180px;
-    text-align: center;
-  }
-  .item img {
-    width: 100%;
-    border-radius: 8px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease;
-  }
-  .item:hover img {
-    transform: scale(1.05);
-  }
-  .item-name {
-    margin-top: 8px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Projects Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  /* Modal */
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0; top: 0; width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.6);
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .modal-content {
-    background: white;
-    border-radius: 10px;
-    max-width: 800px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-  }
-  .modal-close {
-    position: absolute;
-    top: 10px; right: 15px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    user-select: none;
-  }
-  .modal-image {
-    width: 100%;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-  }
-  pre {
-    background: #f0f0f0;
-    padding: 15px;
-    border-radius: 6px;
-    overflow-x: auto;
-    font-family: Consolas, monospace;
-    white-space: pre-wrap;
-  }
-  button.copy-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
-  }
-  button.copy-btn:hover {
-    background-color: #0056b3;
-  }
-</style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(45deg, #fff, #a8edea);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 30px rgba(255,255,255,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .search-box:focus {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.02);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .project-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            animation: fadeInUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .project-card:hover::before {
+            left: 100%;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .project-image .icon-fallback {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .project-card:hover .project-image {
+            border-color: rgba(255,255,255,0.4);
+            transform: scale(1.02);
+        }
+
+        .project-card:hover .project-image img {
+            transform: scale(1.1);
+        }
+
+        .project-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .project-description {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30,30,30,0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: #fff;
+            animation: modalSlideIn 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-image {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .modal-image:hover {
+            transform: scale(1.02);
+        }
+
+        .modal-image::after {
+            content: '🔍 Click to zoom';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .modal-image:hover::after {
+            opacity: 1;
+        }
+
+        .zoom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            cursor: pointer;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .zoom-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 95vw;
+            max-height: 95vh;
+            animation: zoomIn 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        .zoom-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .zoom-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .zoom-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            animation: fadeInUp 0.5s ease 0.5s both;
+        }
+
+        .code-container {
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 10px 10px 0 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .code-lang {
+            font-weight: 600;
+            color: #64ffda;
+        }
+
+        .copy-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .code-block {
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 0 0 10px 10px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #e6e6e6;
+        }
+
+        .code-block::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .code-block::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+
+        .code-block::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+        }
+
+        .code-block::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            z-index: 1001;
+            font-weight: 600;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .gallery {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .modal-content {
+                padding: 1.5rem;
+                border-radius: 15px;
+            }
+
+            .zoom-close {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .zoom-hint {
+                bottom: 10px;
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>Arduino Projects By Shogun</h1>
+            <p>ง่วงนอนว่ะ</p>
+        </div>
 
-<h1>Arduino Projects Code By Shogun</h1>
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search projects..." id="searchBox">
+        </div>
 
-<div class="gallery">
+        <div class="gallery" id="gallery">
+            <!-- Projects will be inserted here -->
+        </div>
+    </div>
 
-  <div class="item" data-image="gimg/nser.png" data-code='
-#include &lt;Servo.h&gt;
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <button class="close-btn" id="closeBtn">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <div class="zoom-modal" id="zoomModal">
+        <button class="zoom-close" id="zoomClose">&times;</button>
+        <div class="zoom-content">
+            <img class="zoom-image" id="zoomImage" alt="Zoomed image">
+        </div>
+        <div class="zoom-hint">Click anywhere to close</div>
+    </div>
+
+    <div class="notification" id="notification">Code copied to clipboard!</div>
+
+    <script>
+        const projects = [
+            {
+                id: 1,
+                title: "Normal Servo Control",
+                description: "Basic servo motor control that sweeps between 0° and 180° positions with simple timing delays.",
+                icon: "🔄",
+                image: "gimg/nser.png",
+                tags: ["Servo", "Basic", "Movement"],
+                code: `#include <Servo.h>
 
 Servo myservo;
 
@@ -132,39 +574,42 @@ void loop() {
 
   myservo.write(180);
   delay(1000);
-}
-'>
-    <img src="gimg/nser.png" alt="Normal Servo" />
-    <div class="item-name">Normal Servo</div>
-  </div>
-
-  <div class="item" data-image="gimg/servol.png" data-code='
-#include &lt;Servo.h&gt;
+}`
+            },
+            {
+                id: 2,
+                title: "Servo with Potentiometer",
+                description: "Control servo position using a potentiometer with real-time serial monitoring and smooth value mapping.",
+                icon: "🎛️",
+                image: "gimg/servol.png",
+                tags: ["Servo", "Potentiometer", "Serial"],
+                code: `#include <Servo.h>
 Servo myservo;
-int potpin=0;
+int potpin = 0;
 int val;
-void setup()
-{
+
+void setup() {
   myservo.attach(9);
   Serial.begin(9600);
 }
 
-void loop()
-{
+void loop() {
   val = analogRead(potpin);
   val = map(val, 0, 1023, 0, 180);
   Serial.print("val = ");
-  Serial.print(val);
+  Serial.println(val);
   myservo.write(val);
   delay(15);
-}
-'>
-    <img src="gimg/servol.png" alt="Servo + Volume" />
-    <div class="item-name">Servo + Volume</div>
-  </div>
-
-  <div class="item" data-image="gimg/sensor.png" data-code='
-#include &lt;Servo.h&gt;
+}`
+            },
+            {
+                id: 3,
+                title: "Ultrasonic Distance Sensor",
+                description: "Measure distance using HC-SR04 ultrasonic sensor with servo response based on proximity detection.",
+                icon: "📡",
+                image: "gimg/sensor.png",
+                tags: ["Ultrasonic", "Sensor", "Distance"],
+                code: `#include <Servo.h>
 
 #define trigPin 9
 #define echoPin 8
@@ -172,7 +617,7 @@ Servo servo;
 int sound = 250;
 
 void setup() {
-  Serial.begin (9600);
+  Serial.begin(9600);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   servo.attach(6);
@@ -187,12 +632,13 @@ void loop() {
   digitalWrite(trigPin, LOW);
   duration = pulseIn(echoPin, HIGH);
   distance = (duration/2) / 29.1;
-  if (distance &lt; 80) {
+  
+  if (distance < 80) {
     Serial.print(distance);
     Serial.println(" cm");
     servo.write(90);
   }
-  else if (distance&lt;180) {
+  else if (distance < 180) {
     Serial.print(distance);
     Serial.println(" cm");
     servo.write(180);
@@ -201,272 +647,279 @@ void loop() {
     Serial.println("The distance is more than 180cm");
   }
   delay(500);
-}
-'>
-    <img src="gimg/sensor.png" alt="Ultrasonic Sensor" />
-    <div class="item-name">Ultrasonic Sensor</div>
-  </div>
+}`
+            },
+            {
+                id: 4,
+                title: "7-Segment Display Counter",
+                description: "Display numbers 0-9 on a 7-segment display with sequential counting and custom digit functions.",
+                icon: "🔢",
+                image: "gimg/7seg.png",
+                tags: ["7-Segment", "Display", "Counter"],
+                code: `int a = 7;
+int b = 6;
+int c = 5;
+int d = 11;
+int e = 10;
+int f = 8;
+int g = 9;
+int dp = 4;
 
-  <div class="item" data-image="gimg/7seg.png" data-code='
-int a=7;
-int b=6;
-int c=5;
-int d=11;
-int e=10;
-int f=8;
-int g=9;
-int dp=4;
-
-void display1(void)
-{
-  digitalWrite(b,HIGH);
-  digitalWrite(c,HIGH);
-}
-
-void display2(void)
-{
-  digitalWrite(a,HIGH);
-  digitalWrite(b,HIGH);
-  digitalWrite(g,HIGH);
-  digitalWrite(e,HIGH);
-  digitalWrite(d,HIGH);
+void display0() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
 }
 
-void display3(void)
-{
-  digitalWrite(a,HIGH);
-  digitalWrite(b,HIGH);
-  digitalWrite(c,HIGH);
-  digitalWrite(d,HIGH);
-  digitalWrite(g,HIGH);
+void display1() {
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
 }
 
-void display4(void)
-{
-  digitalWrite(f,HIGH);
-  digitalWrite(b,HIGH);
-  digitalWrite(g,HIGH);
-  digitalWrite(c,HIGH);
+void display2() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(g, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(d, HIGH);
 }
 
-void display5(void)
-{
-  digitalWrite(a,HIGH);
-  digitalWrite(c,HIGH);
-  digitalWrite(d,HIGH);
-  digitalWrite(f,HIGH);
-  digitalWrite(g,HIGH);
+void display3() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(g, HIGH);
 }
 
-void display6(void)
-{
-  digitalWrite(a,HIGH);
-  digitalWrite(c,HIGH);
-  digitalWrite(d,HIGH);
-  digitalWrite(e,HIGH);
-  digitalWrite(f,HIGH);
-  digitalWrite(g,HIGH);
+void display4() {
+  digitalWrite(f, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(g, HIGH);
+  digitalWrite(c, HIGH);
 }
 
-void display7(void)
-{
-  digitalWrite(a,HIGH);
-  digitalWrite(b,HIGH);
-  digitalWrite(c,HIGH);
+void display5() {
+  digitalWrite(a, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
 }
 
-void display8(void)
-{
-  digitalWrite(a,HIGH);
-  digitalWrite(b,HIGH);
-  digitalWrite(g,HIGH);
-  digitalWrite(c,HIGH);
-  digitalWrite(d,HIGH);
-  digitalWrite(e,HIGH);
-  digitalWrite(f,HIGH);
+void display6() {
+  digitalWrite(a, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
 }
 
-void clearDisplay(void)
-{
-  digitalWrite(a,LOW);
-  digitalWrite(b,LOW);
-  digitalWrite(g,LOW);
-  digitalWrite(c,LOW);
-  digitalWrite(d,LOW);
-  digitalWrite(e,LOW);
-  digitalWrite(f,LOW);
+void display7() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
 }
 
-void display9(void)
-{
-  digitalWrite(a,HIGH);
-  digitalWrite(b,HIGH);
-  digitalWrite(c,HIGH);
-  digitalWrite(d,HIGH);
-  digitalWrite(f,HIGH);
-  digitalWrite(g,HIGH);
+void display8() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(g, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(e, HIGH);
+  digitalWrite(f, HIGH);
 }
 
-void display0(void)
-{
-  digitalWrite(a,HIGH);
-  digitalWrite(b,HIGH);
-  digitalWrite(c,HIGH);
-  digitalWrite(d,HIGH);
-  digitalWrite(e,HIGH);
-  digitalWrite(f,HIGH);
+void display9() {
+  digitalWrite(a, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+  digitalWrite(f, HIGH);
+  digitalWrite(g, HIGH);
 }
 
-void setup()
-{
-  int i;
-  for(i=4;i<=11;i++)
-    pinMode(i,OUTPUT);
+void clearDisplay() {
+  digitalWrite(a, LOW);
+  digitalWrite(b, LOW);
+  digitalWrite(g, LOW);
+  digitalWrite(c, LOW);
+  digitalWrite(d, LOW);
+  digitalWrite(e, LOW);
+  digitalWrite(f, LOW);
+}
 
+void setup() {
+  for(int i = 4; i <= 11; i++)
+    pinMode(i, OUTPUT);
   clearDisplay(); 
 }
 
-void loop()
-{
-  while(1)
-  {
+void loop() {
+  for(int i = 0; i <= 9; i++) {
     clearDisplay();
     delay(100);
-    display1();
-    delay(2000);
-
-    clearDisplay();
-    delay(100);
-    display2();
-    delay(2000);
-
-    clearDisplay();
-    delay(100);
-    display3();
-    delay(2000);
-
-    clearDisplay();
-    delay(100);
-    display4();
-    delay(2000);
-
-    clearDisplay();
-    delay(100);
-    display5();
-    delay(2000);
-
-    clearDisplay();
-    delay(100);
-    display6();
-    delay(2000);
-
-    clearDisplay();
-    delay(100);
-    display7();
-    delay(2000);
-
-    clearDisplay();
-    delay(100);
-    display8();
-    delay(2000);
-
-    clearDisplay();
-    delay(100);
-    display9();
-    delay(2000);
-
-    clearDisplay();
-    delay(100);
-    display0();
+    
+    switch(i) {
+      case 0: display0(); break;
+      case 1: display1(); break;
+      case 2: display2(); break;
+      case 3: display3(); break;
+      case 4: display4(); break;
+      case 5: display5(); break;
+      case 6: display6(); break;
+      case 7: display7(); break;
+      case 8: display8(); break;
+      case 9: display9(); break;
+    }
     delay(2000);
   }
-}
-'>
-    <img src="gimg/7seg.png" alt="7-Segment1 to 0" />
-    <div class="item-name">7-Segment1 to 0</div>
-  </div>
+}`
+            }
+        ];
 
-</div>
+        let filteredProjects = [...projects];
 
-<!-- Modal -->
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
-  <div class="modal-content">
-    <span class="modal-close" id="modal-close" aria-label="Close modal">&times;</span>
-    <img src="" alt="Expanded Image" class="modal-image" id="modal-image" />
-    <pre id="modal-code"></pre>
-    <button class="copy-btn" id="copy-btn">Copy Code</button>
-  </div>
-</div>
+        function renderProjects() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
 
-<script>
-  const items = document.querySelectorAll('.item');
-  const modal = document.getElementById('modal');
-  const modalImage = document.getElementById('modal-image');
-  const modalCode = document.getElementById('modal-code');
-  const modalClose = document.getElementById('modal-close');
-  const copyBtn = document.getElementById('copy-btn');
+            filteredProjects.forEach((project, index) => {
+                const projectCard = document.createElement('div');
+                projectCard.className = 'project-card';
+                projectCard.style.animationDelay = `${index * 0.1}s`;
+                projectCard.innerHTML = `
+                    <div class="project-image">
+                        <img src="${project.image}" alt="${project.title}" 
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="icon-fallback" style="display: none;">${project.icon}</div>
+                    </div>
+                    <h3 class="project-title">${project.title}</h3>
+                    <p class="project-description">${project.description}</p>
+                    <div class="project-tags">
+                        ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                
+                projectCard.addEventListener('click', () => openModal(project));
+                gallery.appendChild(projectCard);
+            });
+        }
 
-  items.forEach(item => {
-    item.addEventListener('click', () => {
-      const imgSrc = item.getAttribute('data-image');
-      const code = item.getAttribute('data-code').trim();
+        function openModal(project) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
 
-      modalImage.src = imgSrc;
-      modalImage.alt = item.querySelector('img').alt || 'Expanded Image';
-      modalCode.textContent = code;
+            modalTitle.textContent = project.title;
+            modalBody.innerHTML = `
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <img src="${project.image}" alt="${project.title}" 
+                         class="modal-image"
+                         style="max-width: 300px; width: 100%; border-radius: 10px; border: 2px solid rgba(255,255,255,0.2);"
+                         onerror="this.style.display='none';"
+                         onclick="openZoom('${project.image}', '${project.title}')" />
+                </div>
+                <p style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.6;">${project.description}</p>
+                <div class="project-tags" style="margin-bottom: 1.5rem;">
+                    ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                </div>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-lang">Arduino C++</span>
+                        <button class="copy-btn" onclick="copyCode('${project.id}')">📋 Copy Code</button>
+                    </div>
+                    <pre class="code-block" id="code-${project.id}">${project.code}</pre>
+                </div>
+            `;
 
-      modal.style.display = 'flex';
-      modal.focus();
-    });
-  });
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
 
-  modalClose.addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
+        function openZoom(imageSrc, imageAlt) {
+            const zoomModal = document.getElementById('zoomModal');
+            const zoomImage = document.getElementById('zoomImage');
+            
+            zoomImage.src = imageSrc;
+            zoomImage.alt = imageAlt;
+            zoomModal.style.display = 'block';
+        }
 
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.style.display = 'none';
-    }
-  });
+        function closeZoom() {
+            const zoomModal = document.getElementById('zoomModal');
+            zoomModal.style.display = 'none';
+        }
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === "Escape" && modal.style.display === "flex") {
-      modal.style.display = "none";
-    }
-  });
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
 
-  modalImage.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-      if (modalImage.requestFullscreen) {
-        modalImage.requestFullscreen();
-      } else if (modalImage.webkitRequestFullscreen) {
-        modalImage.webkitRequestFullscreen();
-      } else if (modalImage.msRequestFullscreen) {
-        modalImage.msRequestFullscreen();
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
-    }
-  });
+        function copyCode(projectId) {
+            const codeElement = document.getElementById(`code-${projectId}`);
+            const code = codeElement.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                showNotification();
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification();
+            });
+        }
 
-  copyBtn.addEventListener('click', () => {
-    navigator.clipboard.writeText(modalCode.textContent).then(() => {
-      copyBtn.textContent = "Copied!";
-      setTimeout(() => {
-        copyBtn.textContent = "Copy Code";
-      }, 1500);
-    }).catch(() => {
-      alert('Failed to copy code');
-    });
-  });
-</script>
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
 
+        function filterProjects() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            filteredProjects = projects.filter(project => 
+                project.title.toLowerCase().includes(searchTerm) ||
+                project.description.toLowerCase().includes(searchTerm) ||
+                project.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+            );
+            renderProjects();
+        }
+
+        // Event listeners
+        document.getElementById('searchBox').addEventListener('input', filterProjects);
+        document.getElementById('closeBtn').addEventListener('click', closeModal);
+        document.getElementById('zoomClose').addEventListener('click', closeZoom);
+        
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') closeModal();
+        });
+
+        document.getElementById('zoomModal').addEventListener('click', (e) => {
+            if (e.target.id === 'zoomModal') closeZoom();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeZoom();
+                closeModal();
+            }
+        });
+
+        // Initialize
+        renderProjects();
+    </script>
 </body>
 </html>
