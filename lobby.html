@@ -5,164 +5,328 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>By Shogun</title>
   <style>
-    body {
-      background-image: url('bg8.jpg');
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-attachment: fixed;
-      font-family: Arial, sans-serif;
+    * {
       margin: 0;
       padding: 0;
-      height: 100vh;
+      box-sizing: border-box;
     }
 
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Arial', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated background particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: float 6s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+      50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+    }
+
+    /* Header styling */
     h1 {
       text-align: center;
-      margin: 30px 0;
+      margin: 40px 0 60px 0;
       color: white;
-      text-shadow: 1px 1px 5px black;
+      font-size: 3.5rem;
+      font-weight: bold;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+      position: relative;
+      z-index: 10;
+      animation: glow 2s ease-in-out infinite alternate;
     }
 
+    @keyframes glow {
+      from { text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
+      to { text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.3); }
+    }
+
+    /* Gallery styling */
     .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      padding-bottom: 100px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      padding: 0 40px 120px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
     }
 
     .item {
-      width: 180px;
       cursor: pointer;
-      border-radius: 10px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-      background: white;
-      transition: transform 0.2s ease;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      animation: slideUp 0.6s ease-out forwards;
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+    .item:nth-child(1) { animation-delay: 0.1s; }
+    .item:nth-child(2) { animation-delay: 0.2s; }
+    .item:nth-child(3) { animation-delay: 0.3s; }
+    .item:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes slideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+      z-index: 1;
+    }
+
+    .item:hover::before {
+      transform: translateX(100%);
     }
 
     .item:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transform: translateY(-15px) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.2);
     }
 
     .item img {
       width: 100%;
+      height: 200px;
+      object-fit: cover;
       display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .item:hover img {
+      transform: scale(1.1);
     }
 
     .item-name {
-      padding: 10px;
+      padding: 20px;
       font-weight: bold;
       text-align: center;
+      font-size: 1.2rem;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 2;
     }
 
+    /* Contact button */
     .contact-btn {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: linear-gradient(135deg, #007bff, #00bfff);
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
       color: white;
-      padding: 12px 20px;
-      border-radius: 30px;
+      padding: 15px 25px;
+      border-radius: 50px;
       text-decoration: none;
       font-weight: bold;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-      z-index: 1000;
+      font-size: 1.1rem;
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 1001;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4); }
+      50% { box-shadow: 0 8px 35px rgba(255, 107, 107, 0.6); }
+      100% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4); }
     }
 
     .contact-btn:hover {
-      background: linear-gradient(135deg, #0056b3, #0099cc);
-      transform: scale(1.05);
+      background: linear-gradient(135deg, #ff5252, #ff7979);
+      transform: scale(1.1) translateY(-3px);
+      box-shadow: 0 15px 35px rgba(255, 107, 107, 0.6);
     }
 
-    /* POPUP */
+    /* Popup styling */
     .popup-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.8);
       display: none;
       justify-content: center;
       align-items: center;
-      z-index: 999;
+      z-index: 1999;
+      backdrop-filter: blur(5px);
     }
 
     .popup {
-      background: white;
-      padding: 25px 30px;
-      border-radius: 15px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      padding: 40px;
+      border-radius: 25px;
       text-align: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      max-width: 300px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      max-width: 400px;
       width: 90%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(-50px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
     }
 
     .popup h2 {
-      margin-bottom: 15px;
+      margin-bottom: 25px;
+      color: white;
+      font-size: 1.8rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .popup a {
       display: block;
-      margin: 10px 0;
-      color: #007bff;
+      margin: 15px 0;
+      color: white;
       text-decoration: none;
       font-weight: bold;
+      font-size: 1.1rem;
+      padding: 12px 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
     }
 
     .popup a:hover {
-      text-decoration: underline;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
     .close-btn {
-      margin-top: 20px;
-      background: #e74c3c;
+      margin-top: 25px;
+      background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
+      padding: 12px 25px;
+      border-radius: 15px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 1rem;
+      transition: all 0.3s ease;
     }
 
     .close-btn:hover {
-      background: #c0392b;
+      background: linear-gradient(135deg, #ff5252, #ff7979);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+        margin: 30px 0 40px 0;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 0 20px 100px 20px;
+      }
+
+      .contact-btn {
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+      }
+
+      .popup {
+        padding: 30px 25px;
+      }
+    }
+
+    /* Loading animation for images */
+    .item img {
+      opacity: 0;
+      animation: fadeIn 0.6s ease-in-out 0.8s forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
   </style>
 </head>
 <body>
 
+<!-- Animated background particles -->
+<div class="particles" id="particles"></div>
+
 <h1>By Shogun</h1>
 
 <div class="gallery">
   <div class="item" onclick="goToArduinoPath()">
-    <img src="arduinouno.png" alt="Project 1" />
+    <img src="arduinouno.png" alt="Arduino UNO" />
     <div class="item-name">Arduino UNO</div>
   </div>
   <div class="item" onclick="goToArduinoPath()">
-    <img src="https://via.placeholder.com/180x120?text=Project+2" alt="Project 2" />
+    <img src="https://via.placeholder.com/280x200/2196F3/FFFFFF?text=Project+2" alt="Project 2" />
     <div class="item-name">โปรเจค 2</div>
   </div>
   <div class="item" onclick="goToArduinoPath()">
-    <img src="https://via.placeholder.com/180x120?text=Project+3" alt="Project 3" />
+    <img src="https://via.placeholder.com/280x200/FF9800/FFFFFF?text=Project+3" alt="Project 3" />
     <div class="item-name">โปรเจค 3</div>
   </div>
   <div class="item" onclick="goToArduinoPath()">
-    <img src="https://via.placeholder.com/180x120?text=Project+4" alt="Project 4" />
+    <img src="https://via.placeholder.com/280x200/9C27B0/FFFFFF?text=Project+4" alt="Project 4" />
     <div class="item-name">โปรเจค 4</div>
   </div>
 </div>
 
-<!-- ปุ่มติดต่อเพิ่มเติม -->
 <a href="#" class="contact-btn" onclick="openPopup()">Contact</a>
 
-<!-- Popup -->
-<div class="popup-overlay" id="popupOverlay">
-  <div class="popup">
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup()">
+  <div class="popup" onclick="event.stopPropagation()">
     <h2>My Contact</h2>
     <a href="https://www.facebook.com/patcharaphon.muensa?locale=th_TH" target="_blank">Facebook</a>
     <a href="https://www.instagram.com/jshogunn19/" target="_blank">Instagram</a>
@@ -171,17 +335,59 @@
 </div>
 
 <script>
+  // Create floating particles
+  function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 50;
+
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      
+      // Random position
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.top = Math.random() * 100 + '%';
+      
+      // Random animation delay
+      particle.style.animationDelay = Math.random() * 6 + 's';
+      particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+      
+      particlesContainer.appendChild(particle);
+    }
+  }
+
   function goToArduinoPath() {
-    window.location.href = 'arduinopath.html';
+    // Add click effect
+    event.target.closest('.item').style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      window.location.href = 'arduinopath.html';
+    }, 150);
   }
 
   function openPopup() {
     document.getElementById('popupOverlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   }
 
   function closePopup() {
-    document.getElementById('popupOverlay').style.display = 'none';
+    const overlay = document.getElementById('popupOverlay');
+    overlay.style.display = 'none';
+    document.body.style.overflow = 'auto';
   }
+
+  // Initialize particles when page loads
+  window.addEventListener('load', createParticles);
+
+  // Add smooth scrolling and entrance animations
+  window.addEventListener('scroll', () => {
+    const items = document.querySelectorAll('.item');
+    items.forEach((item, index) => {
+      const rect = item.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        item.style.animationDelay = (index * 0.1) + 's';
+      }
+    });
+  });
 </script>
 
 </body>
