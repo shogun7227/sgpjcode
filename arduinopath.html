@@ -583,24 +583,294 @@ void loop() {
                 icon: "🎛️",
                 image: "gimg/servol.png",
                 tags: ["Servo", "Potentiometer", "Serial"],
-                code: `#include <Servo.h>
-Servo myservo;
-int potpin = 0;
-int val;
+                code: `// Pin definitions for first display (units)
+int a1 = 7;
+int b1 = 6;
+int c1 = 5;
+int d1 = 11;
+int e1 = 10;
+int f1 = 8;
+int g1 = 9;
+int dp1 = 4;
+
+// Pin definitions for second display (tens)
+int a2 = A0;
+int b2 = A1;
+int c2 = A2;
+int d2 = A3;
+int e2 = A4;
+int f2 = A5;
+int g2 = 2;
+int dp2 = 3;
+
+// Function to display digit on first display (units)
+void displayDigit1(int digit) {
+  switch(digit) {
+    case 0:
+      digitalWrite(a1, HIGH);
+      digitalWrite(b1, HIGH);
+      digitalWrite(c1, HIGH);
+      digitalWrite(d1, HIGH);
+      digitalWrite(e1, HIGH);
+      digitalWrite(f1, HIGH);
+      digitalWrite(g1, LOW);
+      break;
+    case 1:
+      digitalWrite(a1, LOW);
+      digitalWrite(b1, HIGH);
+      digitalWrite(c1, HIGH);
+      digitalWrite(d1, LOW);
+      digitalWrite(e1, LOW);
+      digitalWrite(f1, LOW);
+      digitalWrite(g1, LOW);
+      break;
+    case 2:
+      digitalWrite(a1, HIGH);
+      digitalWrite(b1, HIGH);
+      digitalWrite(c1, LOW);
+      digitalWrite(d1, HIGH);
+      digitalWrite(e1, HIGH);
+      digitalWrite(f1, LOW);
+      digitalWrite(g1, HIGH);
+      break;
+    case 3:
+      digitalWrite(a1, HIGH);
+      digitalWrite(b1, HIGH);
+      digitalWrite(c1, HIGH);
+      digitalWrite(d1, HIGH);
+      digitalWrite(e1, LOW);
+      digitalWrite(f1, LOW);
+      digitalWrite(g1, HIGH);
+      break;
+    case 4:
+      digitalWrite(a1, LOW);
+      digitalWrite(b1, HIGH);
+      digitalWrite(c1, HIGH);
+      digitalWrite(d1, LOW);
+      digitalWrite(e1, LOW);
+      digitalWrite(f1, HIGH);
+      digitalWrite(g1, HIGH);
+      break;
+    case 5:
+      digitalWrite(a1, HIGH);
+      digitalWrite(b1, LOW);
+      digitalWrite(c1, HIGH);
+      digitalWrite(d1, HIGH);
+      digitalWrite(e1, LOW);
+      digitalWrite(f1, HIGH);
+      digitalWrite(g1, HIGH);
+      break;
+    case 6:
+      digitalWrite(a1, HIGH);
+      digitalWrite(b1, LOW);
+      digitalWrite(c1, HIGH);
+      digitalWrite(d1, HIGH);
+      digitalWrite(e1, HIGH);
+      digitalWrite(f1, HIGH);
+      digitalWrite(g1, HIGH);
+      break;
+    case 7:
+      digitalWrite(a1, HIGH);
+      digitalWrite(b1, HIGH);
+      digitalWrite(c1, HIGH);
+      digitalWrite(d1, LOW);
+      digitalWrite(e1, LOW);
+      digitalWrite(f1, LOW);
+      digitalWrite(g1, LOW);
+      break;
+    case 8:
+      digitalWrite(a1, HIGH);
+      digitalWrite(b1, HIGH);
+      digitalWrite(c1, HIGH);
+      digitalWrite(d1, HIGH);
+      digitalWrite(e1, HIGH);
+      digitalWrite(f1, HIGH);
+      digitalWrite(g1, HIGH);
+      break;
+    case 9:
+      digitalWrite(a1, HIGH);
+      digitalWrite(b1, HIGH);
+      digitalWrite(c1, HIGH);
+      digitalWrite(d1, HIGH);
+      digitalWrite(e1, LOW);
+      digitalWrite(f1, HIGH);
+      digitalWrite(g1, HIGH);
+      break;
+  }
+}
+
+// Function to display digit on second display (tens)
+void displayDigit2(int digit) {
+  switch(digit) {
+    case 0:
+      digitalWrite(a2, HIGH);
+      digitalWrite(b2, HIGH);
+      digitalWrite(c2, HIGH);
+      digitalWrite(d2, HIGH);
+      digitalWrite(e2, HIGH);
+      digitalWrite(f2, HIGH);
+      digitalWrite(g2, LOW);
+      break;
+    case 1:
+      digitalWrite(a2, LOW);
+      digitalWrite(b2, HIGH);
+      digitalWrite(c2, HIGH);
+      digitalWrite(d2, LOW);
+      digitalWrite(e2, LOW);
+      digitalWrite(f2, LOW);
+      digitalWrite(g2, LOW);
+      break;
+    case 2:
+      digitalWrite(a2, HIGH);
+      digitalWrite(b2, HIGH);
+      digitalWrite(c2, LOW);
+      digitalWrite(d2, HIGH);
+      digitalWrite(e2, HIGH);
+      digitalWrite(f2, LOW);
+      digitalWrite(g2, HIGH);
+      break;
+    case 3:
+      digitalWrite(a2, HIGH);
+      digitalWrite(b2, HIGH);
+      digitalWrite(c2, HIGH);
+      digitalWrite(d2, HIGH);
+      digitalWrite(e2, LOW);
+      digitalWrite(f2, LOW);
+      digitalWrite(g2, HIGH);
+      break;
+    case 4:
+      digitalWrite(a2, LOW);
+      digitalWrite(b2, HIGH);
+      digitalWrite(c2, HIGH);
+      digitalWrite(d2, LOW);
+      digitalWrite(e2, LOW);
+      digitalWrite(f2, HIGH);
+      digitalWrite(g2, HIGH);
+      break;
+    case 5:
+      digitalWrite(a2, HIGH);
+      digitalWrite(b2, LOW);
+      digitalWrite(c2, HIGH);
+      digitalWrite(d2, HIGH);
+      digitalWrite(e2, LOW);
+      digitalWrite(f2, HIGH);
+      digitalWrite(g2, HIGH);
+      break;
+    case 6:
+      digitalWrite(a2, HIGH);
+      digitalWrite(b2, LOW);
+      digitalWrite(c2, HIGH);
+      digitalWrite(d2, HIGH);
+      digitalWrite(e2, HIGH);
+      digitalWrite(f2, HIGH);
+      digitalWrite(g2, HIGH);
+      break;
+    case 7:
+      digitalWrite(a2, HIGH);
+      digitalWrite(b2, HIGH);
+      digitalWrite(c2, HIGH);
+      digitalWrite(d2, LOW);
+      digitalWrite(e2, LOW);
+      digitalWrite(f2, LOW);
+      digitalWrite(g2, LOW);
+      break;
+    case 8:
+      digitalWrite(a2, HIGH);
+      digitalWrite(b2, HIGH);
+      digitalWrite(c2, HIGH);
+      digitalWrite(d2, HIGH);
+      digitalWrite(e2, HIGH);
+      digitalWrite(f2, HIGH);
+      digitalWrite(g2, HIGH);
+      break;
+    case 9:
+      digitalWrite(a2, HIGH);
+      digitalWrite(b2, HIGH);
+      digitalWrite(c2, HIGH);
+      digitalWrite(d2, HIGH);
+      digitalWrite(e2, LOW);
+      digitalWrite(f2, HIGH);
+      digitalWrite(g2, HIGH);
+      break;
+  }
+}
+
+void clearDisplay() {
+  // Clear first display
+  digitalWrite(a1, LOW);
+  digitalWrite(b1, LOW);
+  digitalWrite(c1, LOW);
+  digitalWrite(d1, LOW);
+  digitalWrite(e1, LOW);
+  digitalWrite(f1, LOW);
+  digitalWrite(g1, LOW);
+  
+  // Clear second display
+  digitalWrite(a2, LOW);
+  digitalWrite(b2, LOW);
+  digitalWrite(c2, LOW);
+  digitalWrite(d2, LOW);
+  digitalWrite(e2, LOW);
+  digitalWrite(f2, LOW);
+  digitalWrite(g2, LOW);
+}
+
+void displayNumber(int number) {
+  clearDisplay();
+  
+  int tens = number / 10;
+  int units = number % 10;
+  
+  // Display tens digit (show 0 if number < 10)
+  if (number >= 10) {
+    displayDigit2(tens);
+  } else {
+    displayDigit2(0);
+  }
+  
+  // Display units digit
+  displayDigit1(units);
+}
 
 void setup() {
-  myservo.attach(9);
-  Serial.begin(9600);
+  // Initialize pins for first display
+  pinMode(a1, OUTPUT);
+  pinMode(b1, OUTPUT);
+  pinMode(c1, OUTPUT);
+  pinMode(d1, OUTPUT);
+  pinMode(e1, OUTPUT);
+  pinMode(f1, OUTPUT);
+  pinMode(g1, OUTPUT);
+  pinMode(dp1, OUTPUT);
+  
+  // Initialize pins for second display
+  pinMode(a2, OUTPUT);
+  pinMode(b2, OUTPUT);
+  pinMode(c2, OUTPUT);
+  pinMode(d2, OUTPUT);
+  pinMode(e2, OUTPUT);
+  pinMode(f2, OUTPUT);
+  pinMode(g2, OUTPUT);
+  pinMode(dp2, OUTPUT);
+  
+  clearDisplay();
 }
 
 void loop() {
-  val = analogRead(potpin);
-  val = map(val, 0, 1023, 0, 180);
-  Serial.print("val = ");
-  Serial.println(val);
-  myservo.write(val);
-  delay(15);
-}`
+  // Count from 1 to 20
+  for(int i = 1; i <= 20; i++) {
+    displayNumber(i);
+    delay(1000);
+  }
+  
+  // Display 0
+  displayNumber(0);
+  delay(1000);
+  
+  // Display 1
+  displayNumber(1);
+  delay(1000);
+        }`
             },
             {
                 id: 3,
