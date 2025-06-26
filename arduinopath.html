@@ -527,6 +527,7 @@
         </div>
 
         <div class="gallery" id="gallery">
+            <!-- Projects will be inserted here -->
         </div>
     </div>
 
@@ -583,27 +584,21 @@ void loop() {
                 image: "gimg/servol.png",
                 tags: ["Servo", "Potentiometer", "Serial"],
                 code: `#include <Servo.h>
-
-Servo servo;
-int potPin = A0;
-int potValue;
-int servoPosition;
+Servo myservo;
+int potpin = 0;
+int val;
 
 void setup() {
-  servo.attach(9);
+  myservo.attach(9);
   Serial.begin(9600);
 }
 
 void loop() {
-  potValue = analogRead(potPin);
-  servoPosition = map(potValue, 0, 1023, 0, 180);
-  servo.write(servoPosition);
-  
-  Serial.print("Potentiometer: ");
-  Serial.print(potValue);
-  Serial.print(" -> Servo: ");
-  Serial.println(servoPosition);
-  
+  val = analogRead(potpin);
+  val = map(val, 0, 1023, 0, 180);
+  Serial.print("val = ");
+  Serial.println(val);
+  myservo.write(val);
   delay(15);
 }`
             },
@@ -766,7 +761,7 @@ void setup() {
 }
 
 void loop() {
-  for(int i = 0; i <= 9; i++) {
+  for(int i = 1; i <= 9; i++) {
     clearDisplay();
     delay(100);
     
@@ -782,12 +777,153 @@ void loop() {
       case 8: display8(); break;
       case 9: display9(); break;
     }
-    delay(2000);
+    delay(1000);
   }
+    clearDisplay0();
+    delay(200);
+    display0();
+    delay(1000);
 }`
             }
         ];
 
         let filteredProjects = [...projects];
 
-        function ren
+        function renderProjects() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+
+            filteredProjects.forEach((project, index) => {
+                const projectCard = document.createElement('div');
+                projectCard.className = 'project-card';
+                projectCard.style.animationDelay = `${index * 0.1}s`;
+                projectCard.innerHTML = `
+                    <div class="project-image">
+                        <img src="${project.image}" alt="${project.title}" 
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div class="icon-fallback" style="display: none;">${project.icon}</div>
+                    </div>
+                    <h3 class="project-title">${project.title}</h3>
+                    <p class="project-description">${project.description}</p>
+                    <div class="project-tags">
+                        ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                
+                projectCard.addEventListener('click', () => openModal(project));
+                gallery.appendChild(projectCard);
+            });
+        }
+
+        function openModal(project) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = project.title;
+            modalBody.innerHTML = `
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <img src="${project.image}" alt="${project.title}" 
+                         class="modal-image"
+                         style="max-width: 300px; width: 100%; border-radius: 10px; border: 2px solid rgba(255,255,255,0.2);"
+                         onerror="this.style.display='none';"
+                         onclick="openZoom('${project.image}', '${project.title}')" />
+                </div>
+                <p style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.6;">${project.description}</p>
+                <div class="project-tags" style="margin-bottom: 1.5rem;">
+                    ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                </div>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-lang">Arduino C++</span>
+                        <button class="copy-btn" onclick="copyCode('${project.id}')">📋 Copy Code</button>
+                    </div>
+                    <pre class="code-block" id="code-${project.id}">${project.code}</pre>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openZoom(imageSrc, imageAlt) {
+            const zoomModal = document.getElementById('zoomModal');
+            const zoomImage = document.getElementById('zoomImage');
+            
+            zoomImage.src = imageSrc;
+            zoomImage.alt = imageAlt;
+            zoomModal.style.display = 'block';
+        }
+
+        function closeZoom() {
+            const zoomModal = document.getElementById('zoomModal');
+            zoomModal.style.display = 'none';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function copyCode(projectId) {
+            const codeElement = document.getElementById(`code-${projectId}`);
+            const code = codeElement.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                showNotification();
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification();
+            });
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function filterProjects() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            filteredProjects = projects.filter(project => 
+                project.title.toLowerCase().includes(searchTerm) ||
+                project.description.toLowerCase().includes(searchTerm) ||
+                project.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+            );
+            renderProjects();
+        }
+
+        // Event listeners
+        document.getElementById('searchBox').addEventListener('input', filterProjects);
+        document.getElementById('closeBtn').addEventListener('click', closeModal);
+        document.getElementById('zoomClose').addEventListener('click', closeZoom);
+        
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') closeModal();
+        });
+
+        document.getElementById('zoomModal').addEventListener('click', (e) => {
+            if (e.target.id === 'zoomModal') closeZoom();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeZoom();
+                closeModal();
+            }
+        });
+
+        // Initialize
+        renderProjects();
+    </script>
+</body>
+</html>
